@@ -15,8 +15,6 @@ class AccountPartialReconcile(models.Model):
         elif self.credit_move_id.journal_id.type in ["bank", "cash"]:
             date = self.credit_move_id.date
         vals = {"date": date}
-        if date.month != self.max_date.month:
-            vals["name"] = False
         moves.write(vals)
         if date.month != self.max_date.month:
             moves._compute_name()
