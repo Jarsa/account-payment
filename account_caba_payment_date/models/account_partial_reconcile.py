@@ -9,13 +9,14 @@ class AccountPartialReconcile(models.Model):
 
     def _create_tax_cash_basis_moves(self):
         moves = super()._create_tax_cash_basis_moves()
-        date = self.max_date
-        if self.debit_move_id.journal_id.type in ["bank", "cash"]:
-            date = self.debit_move_id.date
-        elif self.credit_move_id.journal_id.type in ["bank", "cash"]:
-            date = self.credit_move_id.date
+        rec = self[0]
+        date = rec.max_date
+        if rec.debit_move_id.journal_id.type in ["bank", "cash"]:
+            date = rec.debit_move_id.date
+        elif rec.credit_move_id.journal_id.type in ["bank", "cash"]:
+            date = rec.credit_move_id.date
         vals = {"date": date}
         moves.write(vals)
-        if date.month != self.max_date.month:
+        if date.month != rec.max_date.month:
             moves._compute_name()
         return moves
