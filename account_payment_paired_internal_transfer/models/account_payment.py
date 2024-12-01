@@ -33,7 +33,6 @@ class AccountPayment(models.Model):
         Both payments liquidity transfer lines are then reconciled.
         """
         for payment in self:
-
             paired_payment = payment.copy(
                 {
                     "journal_id": payment.destination_journal_id.id,
