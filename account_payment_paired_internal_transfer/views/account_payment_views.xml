@@ -10,7 +10,7 @@
                 <div
                     class="alert alert-info text-center"
                     role="alert"
-                    attrs="{'invisible': ['|',('paired_internal_transfer_payment_id','!=',False),('is_internal_transfer','=',False)]}"
+                    invisible="paired_internal_transfer_payment_id or not is_internal_transfer"
                 >
                         A second payment will be created automatically in the destination journal.
                 </div>
@@ -18,11 +18,9 @@
             <xpath expr="//field[@name='journal_id']" position="after">
                 <field
                     name="destination_journal_id"
-                    attrs="{
-                        'invisible': [('is_internal_transfer', '=', False)],
-                        'readonly': [('state', '!=', 'draft')],
-                        'required': [('is_internal_transfer', '=', True)]
-                    }"
+                    invisible="not is_internal_transfer"
+                    readonly="state != 'draft'"
+                    required="is_internal_transfer"
                 />
             </xpath>
         </field>
