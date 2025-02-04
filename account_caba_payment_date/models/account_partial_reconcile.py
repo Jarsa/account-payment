@@ -9,6 +9,8 @@ class AccountPartialReconcile(models.Model):
 
     def _create_tax_cash_basis_moves(self):
         moves = super()._create_tax_cash_basis_moves()
+        if not self:
+            return moves
         rec = self[0]
         date = rec.max_date
         if rec.debit_move_id.journal_id.type in ["bank", "cash"]:
