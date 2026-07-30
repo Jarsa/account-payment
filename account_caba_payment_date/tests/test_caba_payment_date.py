@@ -11,8 +11,8 @@ from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 @tagged("post_install", "-at_install")
 class TestCabaPaymentDate(AccountTestInvoicingCommon):
     @classmethod
-    def setUpClass(cls, chart_template_ref=None):
-        super().setUpClass(chart_template_ref=chart_template_ref)
+    def setUpClass(cls):
+        super().setUpClass()
         cls.company = cls.company_data["company"]
         cls.company.tax_exigibility = True
         cls.caba_transition_account = cls.env["account.account"].create(
@@ -21,7 +21,7 @@ class TestCabaPaymentDate(AccountTestInvoicingCommon):
                 "code": "250199",
                 "account_type": "liability_current",
                 "reconcile": True,
-                "company_id": cls.company.id,
+                "company_ids": [Command.set(cls.company.ids)],
             }
         )
         cls.caba_tax = cls.env["account.tax"].create(

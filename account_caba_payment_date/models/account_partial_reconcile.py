@@ -1,10 +1,9 @@
 # Copyright 2024 Jarsa (https://www.jarsa.com)
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
-from datetime import date as date_lib
 from datetime import timedelta
 
-from odoo import _, models
+from odoo import models
 from odoo.exceptions import UserError
 
 
@@ -30,8 +29,8 @@ class AccountPartialReconcile(models.Model):
             # The tax lock date also applies: the cash basis entry affects the
             # tax report, so it cannot be dated inside a tax-locked period.
             lock_date = max(
-                move.company_id._get_user_fiscal_lock_date(),
-                move.company_id.max_tax_lock_date or date_lib.min,
+                move.company_id._get_user_fiscal_lock_date(move.journal_id),
+                move.company_id.user_tax_lock_date,
             )
             if date <= lock_date:
                 policy = move.company_id.caba_payment_date_lock_policy
@@ -41,7 +40,7 @@ class AccountPartialReconcile(models.Model):
                     date = lock_date + timedelta(days=1)
                 else:  # block
                     raise UserError(
-                        _(
+                        self.env._(
                             "The cash basis entry of this reconciliation must be "
                             "dated on the payment date %(date)s, but that period "
                             "is locked "
@@ -62,7 +61,9 @@ class AccountPartialReconcile(models.Model):
                     # Clear the name so the date-sequence constraint does not
                     # reject the write, then resequence for the new period.
                     vals["name"] = False
-                move.write(vals)
+                # skip_readonly_check: the date of a posted move is readonly
+                # since Odoo 19, but this is an internal controlled write.
+                move.with_context(skip_readonly_check=True).write(vals)
                 if month_changed:
                     move._compute_name()
         return moves
