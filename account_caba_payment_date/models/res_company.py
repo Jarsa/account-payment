@@ -23,3 +23,17 @@ class ResCompany(models.Model):
         "- Keep the standard behavior: let Odoo date the entry on the "
         "reconciliation date.",
     )
+    caba_purchase_date_policy = fields.Selection(
+        [
+            ("payment", "Payment date"),
+            ("latest", "Latest of payment and bill dates"),
+        ],
+        default="payment",
+        required=True,
+        string="Cash Basis Purchase Date",
+        help="Date of the cash basis entry of vendor bills:\n"
+        "- Payment date: always the date of the bank/cash entry.\n"
+        "- Latest of payment and bill dates: use the bill date when the bill "
+        "is dated after the payment (e.g. Mexican creditable VAT, which is "
+        "only deductible once the CFDI exists).",
+    )

@@ -11,3 +11,7 @@ class ResConfigSettings(models.TransientModel):
         related="company_id.caba_payment_date_lock_policy",
         readonly=False,
     )
+    caba_purchase_date_policy = fields.Selection(
+        related="company_id.caba_purchase_date_policy",
+        readonly=False,
+    )

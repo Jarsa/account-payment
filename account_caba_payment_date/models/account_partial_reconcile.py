@@ -12,13 +12,26 @@ class AccountPartialReconcile(models.Model):
     _inherit = "account.partial.reconcile"
 
     def _caba_get_payment_date(self):
-        """Return the real payment date of the reconciliation: the date of the
-        bank/cash journal entry when there is one, the newest date otherwise."""
+        """Return the date of the cash basis entry of the reconciliation: the
+        date of the bank/cash journal entry when there is one, the newest date
+        otherwise. For vendor bills, the company can choose to use the bill
+        date when it is after the payment (creditable VAT needs the CFDI)."""
         self.ensure_one()
+        payment_date = False
+        other_line = self.env["account.move.line"]
         for line in (self.debit_move_id, self.credit_move_id):
             if line.journal_id.type in ("bank", "cash"):
-                return line.date
-        return self.max_date
+                payment_date = line.date
+            else:
+                other_line = line
+        if not payment_date:
+            return self.max_date
+        if (
+            other_line.move_id.is_purchase_document(include_receipts=True)
+            and other_line.company_id.caba_purchase_date_policy == "latest"
+        ):
+            return max(payment_date, other_line.date)
+        return payment_date
 
     def _create_tax_cash_basis_moves(self):
         moves = super()._create_tax_cash_basis_moves()

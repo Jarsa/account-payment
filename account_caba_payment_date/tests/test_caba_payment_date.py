@@ -34,11 +34,15 @@ class TestCabaPaymentDate(AccountTestInvoicingCommon):
                 "company_id": cls.company.id,
             }
         )
+        cls.caba_purchase_tax = cls.caba_tax.copy(
+            {"name": "Purchase Tax CABA 16%", "type_tax_use": "purchase"}
+        )
 
-    def _create_posted_invoice(self, invoice_date):
+    def _create_posted_invoice(self, invoice_date, move_type="out_invoice"):
+        tax = self.caba_tax if move_type == "out_invoice" else self.caba_purchase_tax
         invoice = self.env["account.move"].create(
             {
-                "move_type": "out_invoice",
+                "move_type": move_type,
                 "partner_id": self.partner_a.id,
                 "invoice_date": invoice_date,
                 "date": invoice_date,
@@ -48,7 +52,7 @@ class TestCabaPaymentDate(AccountTestInvoicingCommon):
                             "product_id": self.product_a.id,
                             "quantity": 1,
                             "price_unit": 1000.0,
-                            "tax_ids": [Command.set(self.caba_tax.ids)],
+                            "tax_ids": [Command.set(tax.ids)],
                         }
                     )
                 ],
@@ -66,7 +70,9 @@ class TestCabaPaymentDate(AccountTestInvoicingCommon):
         )
 
     def _get_caba_moves(self, invoice):
-        return self.env["account.move"].search([("tax_cash_basis_origin_move_id", "=", invoice.id)])
+        return self.env["account.move"].search(
+            [("tax_cash_basis_origin_move_id", "=", invoice.id)]
+        )
 
     def test_caba_uses_payment_date(self):
         # The invoice is newer than the payment: standard Odoo would date the
@@ -101,6 +107,37 @@ class TestCabaPaymentDate(AccountTestInvoicingCommon):
         # (first open month), not on the payment date.
         self.assertTrue(caba.date > fields.Date.to_date("2026-02-28"))
         self.assertNotEqual(caba.date, fields.Date.to_date("2026-02-10"))
+
+    def test_purchase_policy_payment(self):
+        # Default policy: the bill date is ignored, as in sales.
+        bill = self._create_posted_invoice("2026-05-10", move_type="in_invoice")
+        self._register_payment(bill, "2026-04-29")
+        caba = self._get_caba_moves(bill)
+        self.assertEqual(caba.mapped("date"), [fields.Date.to_date("2026-04-29")])
+
+    def test_purchase_policy_latest_bill_after_payment(self):
+        # Paid in April, CFDI issued in May: creditable on the bill date.
+        self.company.caba_purchase_date_policy = "latest"
+        bill = self._create_posted_invoice("2026-05-10", move_type="in_invoice")
+        self._register_payment(bill, "2026-04-29")
+        caba = self._get_caba_moves(bill)
+        self.assertEqual(caba.mapped("date"), [fields.Date.to_date("2026-05-10")])
+
+    def test_purchase_policy_latest_payment_after_bill(self):
+        # Billed in April, paid in May: creditable on the payment date.
+        self.company.caba_purchase_date_policy = "latest"
+        bill = self._create_posted_invoice("2026-04-10", move_type="in_invoice")
+        self._register_payment(bill, "2026-05-05")
+        caba = self._get_caba_moves(bill)
+        self.assertEqual(caba.mapped("date"), [fields.Date.to_date("2026-05-05")])
+
+    def test_purchase_policy_latest_does_not_affect_sales(self):
+        # Sales keep the payment date even with the purchase policy on.
+        self.company.caba_purchase_date_policy = "latest"
+        invoice = self._create_posted_invoice("2026-05-10")
+        self._register_payment(invoice, "2026-04-29")
+        caba = self._get_caba_moves(invoice)
+        self.assertEqual(caba.mapped("date"), [fields.Date.to_date("2026-04-29")])
 
     def test_caba_name_follows_new_month(self):
         invoice = self._create_posted_invoice("2026-05-10")
