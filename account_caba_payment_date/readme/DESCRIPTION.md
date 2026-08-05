@@ -18,3 +18,8 @@ period, the behavior is configurable per company:
   lock date.
 - **Keep the standard behavior**: let Odoo date the entry on the
   reconciliation date.
+
+For vendor bills, the company can also choose to date the cash basis entry
+on the latest of the payment and bill dates, for countries where the tax is
+only deductible once the invoice has been issued (e.g. the Mexican
+creditable VAT, which requires the CFDI).

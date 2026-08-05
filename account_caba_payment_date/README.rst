@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 =========================
 Account CABA Payment Date
 =========================
@@ -17,7 +13,7 @@ Account CABA Payment Date
 .. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
     :alt: Alpha
-.. |badge2| image:: https://img.shields.io/badge/license-LGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-LGPL--3-blue.png
     :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
     :alt: License: LGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Faccount--payment-lightgray.png?logo=github
@@ -53,6 +49,11 @@ period, the behavior is configurable per company:
 - **Keep the standard behavior**: let Odoo date the entry on the
   reconciliation date.
 
+For vendor bills, the company can also choose to date the cash basis
+entry on the latest of the payment and bill dates, for countries where
+the tax is only deductible once the invoice has been issued (e.g. the
+Mexican creditable VAT, which requires the CFDI).
+
 .. IMPORTANT::
    This is an alpha version, the data model and design can change at any time without warning.
    Only for development or testing purpose, do not use in production.
@@ -76,6 +77,14 @@ period:
    - *Block the reconciliation* (default)
    - *Use the first open date*
    - *Keep the standard behavior*
+
+To configure the date of the cash basis entry of vendor bills, in the
+same section select the *Cash Basis Purchase Date*:
+
+- *Payment date* (default): always the date of the bank/cash entry.
+- *Latest of payment and bill dates*: use the bill date when the bill is
+  dated after the payment. Useful for the Mexican creditable VAT, which
+  is only deductible once the CFDI has been issued.
 
 Usage
 =====
