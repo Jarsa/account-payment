@@ -3,7 +3,7 @@
 
 {
     "name": "Account CABA Payment Date",
-    "version": "17.0.3.0.0",
+    "version": "17.0.3.0.1",
     "author": "Jarsa, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/account-payment",
     "license": "LGPL-3",

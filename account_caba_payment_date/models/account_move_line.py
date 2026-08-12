@@ -16,7 +16,9 @@ SHIFT_KEY = "cash_basis_lock_shift"
 class AccountMoveLine(models.Model):
     _inherit = "account.move.line"
 
-    def _prepare_exchange_difference_move_vals(self, amounts_list, company=None, exchange_date=None, **kwargs):
+    def _prepare_exchange_difference_move_vals(
+        self, amounts_list, company=None, exchange_date=None, **kwargs
+    ):
         """Shift the exchange difference (CABA) entry to the operation date when
         its computed date falls in a closed period.
 
@@ -35,7 +37,9 @@ class AccountMoveLine(models.Model):
         if not move_company:
             return vals
         lock_date = max(
-            move_company.with_context(cash_basis_check_tax_lock=True)._get_user_fiscal_lock_date(),
+            move_company.with_context(
+                cash_basis_check_tax_lock=True
+            )._get_user_fiscal_lock_date(),
             date.min,
         )
         expected_date = move_values.get("date")
@@ -58,7 +62,7 @@ class AccountMoveLine(models.Model):
 
         moves = super()._create_exchange_difference_moves(exchange_diff_values_list)
 
-        for move, expected_date in zip(moves, expected_dates):
+        for move, expected_date in zip(moves, expected_dates, strict=False):
             if not expected_date:
                 continue
             body = Markup(

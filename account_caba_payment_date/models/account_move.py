@@ -44,7 +44,9 @@ class AccountMove(models.Model):
             # The cash basis entry itself always gets its own message.
             move.message_post(body=body)
             # The source documents get a single message per shifted date.
-            source_documents = partial.debit_move_id.move_id | partial.credit_move_id.move_id
+            source_documents = (
+                partial.debit_move_id.move_id | partial.credit_move_id.move_id
+            )
             for document in source_documents:
                 key = (document.id, expected_date)
                 if key in seen:
