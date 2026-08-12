@@ -1,0 +1,130 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* account_caba_payment_date
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields.selection,name:account_caba_payment_date.selection__res_company__caba_payment_date_lock_policy__block
+msgid "Block the reconciliation"
+msgstr "Bloquear la conciliación"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields,field_description:account_caba_payment_date.field_res_company__caba_payment_date_lock_policy
+#: model:ir.model.fields,field_description:account_caba_payment_date.field_res_config_settings__caba_payment_date_lock_policy
+msgid "Cash Basis Lock Policy"
+msgstr "Política de bloqueo Cash Basis"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields,field_description:account_caba_payment_date.field_res_company__caba_purchase_date_policy
+#: model:ir.model.fields,field_description:account_caba_payment_date.field_res_config_settings__caba_purchase_date_policy
+msgid "Cash Basis Purchase Date"
+msgstr "Fecha Cash Basis en compras"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields,help:account_caba_payment_date.field_res_company__caba_purchase_date_policy
+#: model:ir.model.fields,help:account_caba_payment_date.field_res_config_settings__caba_purchase_date_policy
+msgid ""
+"Date of the cash basis entry of vendor bills:\n"
+"- Payment date: always the date of the bank/cash entry.\n"
+"- Latest of payment and bill dates: use the bill date when the bill is "
+"dated after the payment (e.g. Mexican creditable VAT, which is only "
+"deductible once the CFDI exists)."
+msgstr ""
+"Fecha de la póliza Cash Basis de las facturas de proveedor:\n"
+"- Fecha de pago: siempre la fecha del asiento de banco/efectivo.\n"
+"- La más reciente entre pago y factura: usar la fecha de la factura cuando "
+"es posterior al pago (p. ej. el IVA acreditable mexicano, que solo es "
+"deducible cuando existe el CFDI)."
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields.selection,name:account_caba_payment_date.selection__res_company__caba_payment_date_lock_policy__standard
+msgid "Keep the standard behavior"
+msgstr "Mantener el comportamiento estándar"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields.selection,name:account_caba_payment_date.selection__res_company__caba_purchase_date_policy__latest
+msgid "Latest of payment and bill dates"
+msgstr "La más reciente entre pago y factura"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields.selection,name:account_caba_payment_date.selection__res_company__caba_purchase_date_policy__payment
+msgid "Payment date"
+msgstr "Fecha de pago"
+
+#. module: account_caba_payment_date
+#. odoo-python
+#: code:addons/account_caba_payment_date/models/account_partial_reconcile.py:0
+#, python-format
+msgid ""
+"The cash basis entry of this reconciliation must be dated on the payment "
+"date %(date)s, but that period is locked (lock date: %(lock_date)s).\n"
+"Reopen the period, or change the cash basis lock policy in the accounting "
+"settings."
+msgstr ""
+"La póliza Cash Basis de esta conciliación debe fecharse en la fecha de pago"
+" %(date)s, pero ese periodo está bloqueado (fecha de bloqueo: "
+"%(lock_date)s).\n"
+"Reabra el periodo o cambie la política de bloqueo Cash Basis en los ajustes"
+" de contabilidad."
+
+#. module: account_caba_payment_date
+#. odoo-python
+#: code:addons/account_caba_payment_date/models/account_move_line.py:0
+#, python-format
+msgid ""
+"The exchange rate difference journal entry inherited the operation date "
+"because the accounting period of the expected date was closed.<br/>Expected "
+"date: %(expected)s<br/>Applied operation date: %(applied)s"
+msgstr ""
+"La póliza de diferencial cambiario heredó la fecha de operación porque el "
+"periodo contable de la fecha esperada se encontraba cerrado.<br/>Fecha "
+"esperada: %(expected)s<br/>Fecha de operación aplicada: %(applied)s"
+
+#. module: account_caba_payment_date
+#. odoo-python
+#: code:addons/account_caba_payment_date/models/account_move.py:0
+#, python-format
+msgid ""
+"The VAT cash basis journal entry was generated with a date different from "
+"the source documents because the accounting period of the expected date was "
+"closed.<br/>Expected date: %(expected)s<br/>Applied date: %(applied)s"
+msgstr ""
+"La póliza de traslado de IVA (Cash Basis) se generó con una fecha distinta a"
+" la de los documentos de origen porque el periodo contable de la fecha "
+"esperada se encontraba cerrado.<br/>Fecha esperada: %(expected)s<br/>Fecha "
+"aplicada: %(applied)s"
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields,help:account_caba_payment_date.field_res_company__caba_payment_date_lock_policy
+#: model:ir.model.fields,help:account_caba_payment_date.field_res_config_settings__caba_payment_date_lock_policy
+msgid ""
+"What to do when the payment date of a cash basis entry falls in a locked "
+"period:\n"
+"- Block the reconciliation: raise an error asking to reopen the period.\n"
+"- Use the first open date: date the entry on the first day after the lock.\n"
+"- Keep the standard behavior: let Odoo date the entry on the reconciliation "
+"date."
+msgstr ""
+"Qué hacer cuando la fecha de pago de una póliza Cash Basis cae en un "
+"periodo bloqueado:\n"
+"- Bloquear la conciliación: lanzar un error pidiendo reabrir el periodo.\n"
+"- Usar la primera fecha abierta: fechar la póliza el primer día después del "
+"bloqueo.\n"
+"- Mantener el comportamiento estándar: dejar que Odoo feche la póliza en la "
+"fecha de la conciliación."
+
+#. module: account_caba_payment_date
+#: model:ir.model.fields.selection,name:account_caba_payment_date.selection__res_company__caba_payment_date_lock_policy__next_open
+msgid "Use the first open date"
+msgstr "Usar la primera fecha abierta"
