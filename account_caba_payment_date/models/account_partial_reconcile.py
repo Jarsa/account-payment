@@ -34,7 +34,34 @@ class AccountPartialReconcile(models.Model):
         return payment_date
 
     def _create_tax_cash_basis_moves(self):
-        moves = super()._create_tax_cash_basis_moves()
+        """Create the cash basis entries honoring the lock dates and date them
+        on the payment date according to the company policies.
+
+        The ``cash_basis_check_tax_lock`` context key makes the effective lock
+        date (see :meth:`res.company._get_user_fiscal_lock_date`) also account
+        for the tax lock date. As a result, the standard fallback of
+        ``_create_tax_cash_basis_moves`` dates the entry on the operation date
+        (today) when the period of the most recent source document is closed,
+        instead of refusing to post inside the locked period.
+
+        The partials whose natural date falls in a locked period are recorded
+        before creation (using the very same condition as the standard method)
+        to post a traceability message on the resulting entries and their
+        source documents.
+        """
+        expected_date_per_partial = {}
+        for partial in self:
+            lock_date = partial.company_id.with_context(
+                cash_basis_check_tax_lock=True
+            )._get_user_fiscal_lock_date()
+            if partial.max_date and partial.max_date <= (lock_date or date_lib.min):
+                expected_date_per_partial[partial.id] = partial.max_date
+
+        moves = super(
+            AccountPartialReconcile,
+            self.with_context(cash_basis_check_tax_lock=True),
+        )._create_tax_cash_basis_moves()
+
         for move in moves:
             partial = move.tax_cash_basis_rec_id
             if not partial:
@@ -42,10 +69,9 @@ class AccountPartialReconcile(models.Model):
             date = partial._caba_get_payment_date()
             # The tax lock date also applies: the cash basis entry affects the
             # tax report, so it cannot be dated inside a tax-locked period.
-            lock_date = max(
-                move.company_id._get_user_fiscal_lock_date(),
-                move.company_id.max_tax_lock_date or date_lib.min,
-            )
+            lock_date = move.company_id.with_context(
+                cash_basis_check_tax_lock=True
+            )._get_user_fiscal_lock_date()
             if date <= lock_date:
                 policy = move.company_id.caba_payment_date_lock_policy
                 if policy == "standard":
@@ -78,4 +104,6 @@ class AccountPartialReconcile(models.Model):
                 move.write(vals)
                 if month_changed:
                     move._compute_name()
+        if expected_date_per_partial:
+            moves._log_cash_basis_lock_shift(expected_date_per_partial)
         return moves

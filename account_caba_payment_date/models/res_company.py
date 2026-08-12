@@ -1,11 +1,33 @@
 # Copyright 2026 Jarsa (https://www.jarsa.com)
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
+from datetime import date
+
 from odoo import fields, models
 
 
 class ResCompany(models.Model):
     _inherit = "res.company"
+
+    def _get_user_fiscal_lock_date(self):
+        """Include the tax lock date in the effective lock date used to decide
+        the cash basis / exchange difference move date.
+
+        The standard ``_get_user_fiscal_lock_date`` only considers the fiscal
+        year and period lock dates. The cash basis entry, however, also impacts
+        the tax report and is therefore validated against ``max_tax_lock_date``.
+        When the closing is done through the tax lock date, the standard cash
+        basis fallback (date the entry on the reconciliation date) never
+        triggers and posting is refused.
+
+        We only extend the behaviour when the ``cash_basis_check_tax_lock``
+        context key is set, so the regular accounting flow keeps Odoo's
+        standard behaviour untouched.
+        """
+        lock_date = super()._get_user_fiscal_lock_date()
+        if self.env.context.get("cash_basis_check_tax_lock"):
+            lock_date = max(lock_date, self.max_tax_lock_date or date.min)
+        return lock_date
 
     caba_payment_date_lock_policy = fields.Selection(
         [
