@@ -58,6 +58,11 @@ adds:
 - **Follow-up**: the invoices whose customer paid in time and still wait
   for the credit note show under the *Early Payment to Apply* filter.
 
+The last day to pay, the discount, the credit note and the *Apply Early
+Payment* button come from ``account_early_payment_base``, shared with
+the supplier side (``account_supplier_early_payment_discount``), so both
+can be installed together.
+
 **Table of contents**
 
 .. contents::
