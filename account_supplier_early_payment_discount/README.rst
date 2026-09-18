@@ -51,6 +51,10 @@ paid in time, and follows up the credit note the supplier owes.
   Up Early Payment Credit Notes* group, until the credit note of the
   supplier arrives.
 
+The last day to pay, the discount, the credit note and the *Apply Early
+Payment* button come from ``account_early_payment_base``, shared with
+the customer side (``account_customer_early_payment_discount``).
+
 The native early payment discount of the payment terms does not fit this
 flow: it knows a single discount counted from the invoice date and books
 it as a write-off when the payment is registered. Here there are two
