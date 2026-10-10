@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="account_move_group_early_payment_credit_note" model="res.groups">
         <field name="name">Follow Up Early Payment Credit Notes</field>
