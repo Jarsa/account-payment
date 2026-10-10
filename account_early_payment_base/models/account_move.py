@@ -84,9 +84,10 @@ class AccountMove(models.Model):
         for move in posted.filtered("is_early_payment_refund"):
             invoice = move.reversed_entry_id
             (invoice.line_ids + move.line_ids).filtered(
-                lambda line: line.account_type
-                in ("asset_receivable", "liability_payable")
-                and not line.reconciled
+                lambda line: (
+                    line.account_type in ("asset_receivable", "liability_payable")
+                    and not line.reconciled
+                )
             ).reconcile()
         return posted
 
