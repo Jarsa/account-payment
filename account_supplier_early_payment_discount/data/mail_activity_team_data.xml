@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo noupdate="1">
     <!-- Its members are the users of the follow-up group, synced every time
          a credit note is chased, so the group is the only thing to maintain. -->

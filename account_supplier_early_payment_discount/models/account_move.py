@@ -43,8 +43,10 @@ class AccountMove(models.Model):
         if self.partner_id.commercial_partner_id.early_payment_base == "receipt":
             pickings = (
                 self.invoice_line_ids.purchase_line_id.order_id.picking_ids.filtered(
-                    lambda picking: picking.state == "done"
-                    and picking.picking_type_code == "incoming"
+                    lambda picking: (
+                        picking.state == "done"
+                        and picking.picking_type_code == "incoming"
+                    )
                 )
             )
             if pickings:
