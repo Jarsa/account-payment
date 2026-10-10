@@ -1,8 +1,7 @@
 # Copyright 2026 Jarsa
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from datetime import datetime, time, timedelta
-
-import pytz
+from zoneinfo import ZoneInfo
 
 from odoo import models
 
@@ -28,8 +27,8 @@ class ResCompany(models.Model):
         calendar = self._early_payment_calendar()
         if not calendar:
             return start + timedelta(days=days)
-        begin = pytz.timezone(calendar.tz).localize(
-            datetime.combine(start + timedelta(days=1), time.min)
+        begin = datetime.combine(
+            start + timedelta(days=1), time.min, tzinfo=ZoneInfo(self.tz or "UTC")
         )
         return calendar.plan_days(days, begin, compute_leaves=True).date()
 

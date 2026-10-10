@@ -3,7 +3,7 @@
 {
     "name": "Early Payment Discount Base",
     "summary": "Common ground of the early payment discounts settled by a credit note",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Accounting",
     "website": "https://github.com/OCA/account-payment",
     "author": "Jarsa, Odoo Community Association (OCA)",
