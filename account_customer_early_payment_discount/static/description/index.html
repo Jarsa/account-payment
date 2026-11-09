@@ -445,6 +445,11 @@ then fully paid.</p>
 <tt class="docutils literal">account.move._early_payment_paid_on_time()</tt>, and the lines the
 discount takes off by <tt class="docutils literal">account.move._early_payment_line_eligible()</tt>;
 both can be overridden.</p>
+<p>The days to pay within count from the invoice date, as returned by
+<tt class="docutils literal">account.move._get_early_payment_date_ref()</tt>. Override it to count
+them from another event, such as the day the customer receives the
+goods, and add the fields it reads to the dependencies of
+<tt class="docutils literal">_compute_early_payment</tt>.</p>
 </div>
 <div class="section" id="bug-tracker">
 <h2><a class="toc-backref" href="#toc-entry-3">Bug Tracker</a></h2>

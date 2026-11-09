@@ -1,6 +1,7 @@
 # Copyright 2026 Jarsa
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 from datetime import date
+from unittest.mock import patch
 
 from odoo import Command
 from odoo.exceptions import UserError
@@ -127,6 +128,19 @@ class TestCustomerEarlyPayment(TransactionCase):
         )
         self.assertFalse(wizard.early_payment_discount_mode)
         self.assertEqual(wizard.amount, 1392.0)
+
+    def test_date_counts_from_the_reference_date(self):
+        # Received on Monday the 14th: 8 business days skipping the 16th.
+        with patch.object(
+            type(self.env["account.move"]),
+            "_get_early_payment_date_ref",
+            lambda move: date(2026, 9, 14),
+        ):
+            invoice = self._invoice()
+            self.assertEqual(invoice.early_payment_date, date(2026, 9, 25))
+            self.term.early_discount_business_days = False
+            self.assertEqual(invoice.early_payment_date, date(2026, 9, 22))
+        self.assertEqual(invoice._get_early_payment_date_ref(), invoice.invoice_date)
 
     def test_calendar_days_whole_invoice(self):
         self.term.write(

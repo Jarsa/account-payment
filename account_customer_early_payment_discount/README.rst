@@ -98,6 +98,12 @@ Whether an invoice is paid in time is decided by
 discount takes off by ``account.move._early_payment_line_eligible()``;
 both can be overridden.
 
+The days to pay within count from the invoice date, as returned by
+``account.move._get_early_payment_date_ref()``. Override it to count
+them from another event, such as the day the customer receives the
+goods, and add the fields it reads to the dependencies of
+``_compute_early_payment``.
+
 Bug Tracker
 ===========
 
