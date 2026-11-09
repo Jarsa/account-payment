@@ -55,6 +55,15 @@ class AccountMove(models.Model):
     def _compute_early_payment_can_apply(self):
         return super()._compute_early_payment_can_apply()
 
+    def _get_early_payment_date_ref(self):
+        """Day the days to pay within count from: the invoice date.
+
+        Override it to count them from another event, such as the day the
+        customer receives the goods, and add the fields it reads to the
+        dependencies of `_compute_early_payment`."""
+        self.ensure_one()
+        return self.invoice_date
+
     def _get_early_payment_values(self):
         values = super()._get_early_payment_values()
         term = self.invoice_payment_term_id
@@ -65,14 +74,13 @@ class AccountMove(models.Model):
             and term.early_discount_credit_note
         ):
             return values
+        date_ref = self._get_early_payment_date_ref()
         base = sum(self._early_payment_eligible_lines().mapped("price_total"))
         return {
             "date": (
-                self.company_id._add_business_days(
-                    self.invoice_date, term.discount_days
-                )
+                self.company_id._add_business_days(date_ref, term.discount_days)
                 if term.early_discount_business_days
-                else self.invoice_date + timedelta(days=term.discount_days)
+                else date_ref + timedelta(days=term.discount_days)
             ),
             "amount": self.currency_id.round(base * term.discount_percentage / 100.0),
         }
